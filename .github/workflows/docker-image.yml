@@ -45,14 +45,13 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: 'google-github-actions/auth@v1'
         with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-#          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
-#          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+          workload_identity_provider: '${{ secrets.GC_WIF_PROVIDER }}'
+          service_account: '${{ secrets.GC_WIF_SERVICE_ACCOUNT }}'
 
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v1'
         with:
-         project_id: '${{ vars.PROJECT_ID }}'
+         project_id: '${{ secrets.GC_PROJECT_ID }}'
 
       - name: Docker auth
         run: |-
@@ -64,6 +63,6 @@ jobs:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: gcr.io/${{ vars.PROJECT_ID }}/aitestdrive:latest
+          tags: gcr.io/${{ secrets.GC_PROJECT_ID }}/aitestdrive:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
