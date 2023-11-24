@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "aitestdrive"
+version = "0.1.0"
+description = ""
+authors = ["etvt <149910696+etvt@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.104.1"
+langchain = "^0.0.340"
+uvicorn = "^0.24.0.post1"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
