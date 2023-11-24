@@ -51,7 +51,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v1'
         with:
-         project_id: '${{ env.PROJECT_ID }}'
+         project_id: '${{ vars.PROJECT_ID }}'
 
       - name: Docker auth
         run: |-
@@ -63,6 +63,6 @@ jobs:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: gcr.io/${{ env.PROJECT_ID }}/aitestdrive:latest
+          tags: gcr.io/${{ vars.PROJECT_ID }}/aitestdrive:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
