@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,5 +36,32 @@ jobs:
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/etvt/aitestdrive:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Login to Google Cloud
+        id: 'google-cloud-auth'
+        if: github.event_name != 'pull_request'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+         project_id: '${{ env.PROJECT_ID }}'
+
+      - name: Docker auth
+        run: |-
+          gcloud auth configure-docker gcr.io
+
+      - name: Build and push Docker image to GCR
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: gcr.io/${{ env.PROJECT_ID }}/aitestdrive:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
