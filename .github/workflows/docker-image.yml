@@ -30,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image to Github Container Registry
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
@@ -53,11 +53,11 @@ jobs:
         with:
          project_id: '${{ secrets.GC_PROJECT_ID }}'
 
-      - name: Docker auth
+      - name: Login to Google Container Registry
         run: |-
           gcloud auth configure-docker gcr.io
 
-      - name: Build and push Docker image to GCR
+      - name: Build and push Docker image to Google Container Registry
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
