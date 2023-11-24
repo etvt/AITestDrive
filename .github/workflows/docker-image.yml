@@ -45,8 +45,9 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: 'google-github-actions/auth@v1'
         with:
-          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
-          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+#          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+#          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
 
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v1'
