@@ -5,3 +5,4 @@ Dockerfile*
 **/.gitmodules
 .idea/
 local**
+docker/volumes**

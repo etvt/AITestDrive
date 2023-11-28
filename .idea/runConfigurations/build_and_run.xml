@@ -5,6 +5,15 @@
         <option name="imageTag" value="etvt/aitestdrive:local" />
         <option name="buildKitEnabled" value="true" />
         <option name="containerName" value="aitestdrive_local" />
+        <option name="portBindings">
+          <list>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8000" />
+              <option name="hostIp" value="127.0.0.1" />
+              <option name="hostPort" value="8000" />
+            </DockerPortBindingImpl>
+          </list>
+        </option>
         <option name="sourceFilePath" value="Dockerfile" />
       </settings>
     </deployment>
