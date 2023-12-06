@@ -2,7 +2,14 @@
 POST http://localhost:8000/api/chat/
 Content-Type: application/json
 
-"Hi. Who are you? Please introduce yourself."
+{
+  "history": [
+    {
+      "content": "What is the main field of expertise of the XYZ company?",
+      "role": "user"
+    }
+  ]
+}
 
 
 ### Local
@@ -10,7 +17,18 @@ GET http://localhost:8000/api/version
 
 
 ### Cloud
+GET https://<specify external ip or host>/api/version
+Authorization: Bearer <specify token>
+
+### Cloud
 POST https://<specify external ip or host>/api/chat/
 Authorization: Bearer <specify token>
 
-"Hi. Who are you? Please introduce yourself."
+{
+  "history": [
+    {
+      "content": "What is the main field of expertise of the XYZ company?",
+      "role": "user"
+    }
+  ]
+}

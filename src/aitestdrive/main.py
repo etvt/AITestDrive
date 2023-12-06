@@ -1,11 +1,12 @@
-import os
+import sys
 
 import uvicorn
 
+from aitestdrive.common.config import config
+
 
 def main(**kwargs):
-    port = int(os.environ.get('PORT', 8000))  # Google Cloud sends us the $PORT it wants us to listen on
-    uvicorn.run("aitestdrive.controller.app:api", host="0.0.0.0", port=port, **kwargs)
+    uvicorn.run("aitestdrive.controller.app:api", host="0.0.0.0", port=config.listen_port, **kwargs)
 
 
 def main_dev():
@@ -13,4 +14,7 @@ def main_dev():
 
 
 if __name__ == "__main__":
-    main()
+    if "--dev" in sys.argv:
+        main_dev()
+    else:
+        main()
