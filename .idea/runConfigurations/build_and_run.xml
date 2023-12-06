@@ -18,7 +18,7 @@
         <option name="volumeBindings">
           <list>
             <DockerVolumeBindingImpl>
-              <option name="containerPath" value="/home/user/.config/gcloud" />
+              <option name="containerPath" value="/app/docker/volumes/gcloud_cli_config/gcloud" />
               <option name="hostPath" value="$PROJECT_DIR$/docker/volumes/gcloud_cli_config/gcloud" />
               <option name="readOnly" value="true" />
             </DockerVolumeBindingImpl>

@@ -6,14 +6,13 @@ from fastapi import APIRouter
 from google.cloud import aiplatform
 from vertexai.language_models import ChatModel
 
-from aitestdrive.common.config import config
 from aitestdrive.common.models import ChatMessage, ChatRequest
 
 log = logging.getLogger(__name__)
 
 api = APIRouter(prefix="/chat", tags=["Chat"])
 
-aiplatform.init(project=config.gcp_project)
+aiplatform.init()
 
 
 @api.post("/")
