@@ -11,6 +11,9 @@ Content-Type: application/json
   ]
 }
 
+### Local
+POST http://localhost:8000/api/documents/re-vectorize-from-storage
+
 
 ### Local
 GET http://localhost:8000/api/version

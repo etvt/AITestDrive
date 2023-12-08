@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 
 from aitestdrive.controller.chat import api as chat_api
+from aitestdrive.controller.document import api as documents_api
 from aitestdrive.controller.version import api as version_api
 
 log = logging.getLogger(__name__)
@@ -36,6 +37,7 @@ async def add_process_time_header(request: Request, call_next):
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(chat_api)
+api_router.include_router(documents_api)
 api_router.include_router(version_api)
 
 api.include_router(api_router)
