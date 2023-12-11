@@ -20,12 +20,13 @@ GET http://localhost:8000/api/version
 
 
 ### Cloud
-GET https://<specify external ip or host>/api/version
-Authorization: Bearer <specify token>
+GET https://<please specify>/api/version
+Authorization: Bearer <please specify>
 
 ### Cloud
-POST https://<specify external ip or host>/api/chat/
-Authorization: Bearer <specify token>
+POST https://<please specify>/api/chat/
+Content-Type: application/json
+Authorization: Bearer <please specify>
 
 {
   "history": [
@@ -35,3 +36,7 @@ Authorization: Bearer <specify token>
     }
   ]
 }
+
+### Cloud
+POST https://<please specify>/api/documents/re-vectorize-from-storage
+Authorization: Bearer <please specify>
