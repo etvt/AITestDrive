@@ -2,11 +2,11 @@ import logging
 from typing import List
 
 import vertexai
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from vertexai.language_models import ChatModel
 
 from aitestdrive.common.models import ChatMessage, ChatRequest
-from aitestdrive.service.document import document_service
+from aitestdrive.service.document import DocumentService
 
 log = logging.getLogger(__name__)
 
@@ -14,7 +14,8 @@ api = APIRouter(prefix="/chat", tags=["Chat"])
 
 
 @api.post("/")
-async def chat(request: ChatRequest) -> ChatMessage:
+async def chat(request: ChatRequest,
+               document_service=Depends(DocumentService)) -> ChatMessage:
     log.debug(f"Request received: '{request}'")
 
     assert len(request.history) > 0
