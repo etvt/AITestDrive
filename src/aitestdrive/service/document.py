@@ -1,17 +1,14 @@
-import io
 import logging
 from typing import List
 
-import pdfplumber
 from fastapi import Depends
-from google.cloud import storage
+from langchain.document_loaders import GCSDirectoryLoader
 from langchain.text_splitter import TokenTextSplitter
-from vertexai.language_models import TextEmbeddingModel
+from langchain_core.documents import Document
 
-from aitestdrive.common.config import config
 from aitestdrive.di import singletons
-from aitestdrive.di.factories import create_storage_client
-from aitestdrive.persistence.qdrant import QdrantService
+from aitestdrive.di.factories import create_gcs_directory_loader, create_qdrant_service
+from aitestdrive.persistence.qdrant import QdrantService, QdrantReadContext
 
 log = logging.getLogger(__name__)
 
@@ -19,46 +16,29 @@ log = logging.getLogger(__name__)
 class DocumentService:
 
     def __init__(self,
-                 storage_client: storage.Client = Depends(create_storage_client),
-                 qdrant_service: QdrantService = Depends(singletons.depends(QdrantService))):
-        self.__storage_client = storage_client
+                 storage_directory_loader: GCSDirectoryLoader = Depends(create_gcs_directory_loader),
+                 qdrant_service: QdrantService = Depends(singletons.of(create_qdrant_service))):
+        self.__storage_directory_loader = storage_directory_loader
         self.__qdrant_service = qdrant_service
-        self.__embedding_model = TextEmbeddingModel.from_pretrained("textembedding-gecko")
 
     async def search_documents(self, query: str, limit: int = 5) -> List[str]:
-        query_vector = (await self.__embedding_model.get_embeddings_async([query]))[0].values
+        async with self.read_context() as context:
+            search_results = await context.search(query, limit=limit)
+            return [doc.page_content for doc in search_results]
 
-        search_results = await self.__qdrant_service.search(query_vector, limit=limit)
-
-        return [payload['text'] for payload in search_results]
+    def read_context(self) -> QdrantReadContext:
+        return self.__qdrant_service.read_context()
 
     async def re_vectorize_documents_from_storage(self):
-        bucket = self.__storage_client.bucket(config.document_bucket)
+        docs = self.__storage_directory_loader.load()
+        assert len(docs) > 0
+        chunks = DocumentService.chunk_documents(docs)
 
-        chunks = []
-        for blob in bucket.list_blobs():
-            if blob.name.endswith('.pdf'):
-                pdf_file_content = io.BytesIO(blob.download_as_bytes())
-                pdf_as_text = DocumentService.extract_text_from_pdf(pdf_file_content)
-                chunks += DocumentService.chunk_text(pdf_as_text, chunk_size=300, chunk_overlap=10)
-
-        embeddings = await self.__embedding_model.get_embeddings_async(chunks)
-        assert len(embeddings) > 0
-
-        await self.__qdrant_service.re_upload_collection(vector_size=len(embeddings[0].values),
-                                                         vectors=map(lambda embedding: embedding.values, embeddings),
-                                                         payloads=map(lambda chunk: {'text': chunk}, chunks))
+        await self.__qdrant_service.re_upload_collection(chunks)
 
     @staticmethod
-    def extract_text_from_pdf(pdf_file_content):
-        with pdfplumber.open(pdf_file_content) as pdf:
-            return '\n\n\n'.join(
-                [page.extract_text() for page in pdf.pages]
-            )
-
-    @staticmethod
-    def chunk_text(text, chunk_size, chunk_overlap) -> List[str]:
+    def chunk_documents(documents, chunk_size=300, chunk_overlap=10) -> List[Document]:
         text_splitter = TokenTextSplitter(chunk_size=chunk_size,
                                           chunk_overlap=chunk_overlap)
 
-        return [doc.page_content for doc in text_splitter.create_documents([text])]
+        return text_splitter.split_documents(documents)

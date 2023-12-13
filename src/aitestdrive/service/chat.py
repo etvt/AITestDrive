@@ -1,41 +1,39 @@
 import logging
 from typing import List
 
-import vertexai
 from fastapi import Depends
-from vertexai.language_models import ChatModel
+from langchain_core.language_models import BaseLLM
+from langchain_core.messages import HumanMessage, BaseMessage, AIMessage
 
 from aitestdrive.common.models import ChatMessage
+from aitestdrive.di.factories import create_llm
 from aitestdrive.service.document import DocumentService
+from aitestdrive.service.langchain.chains import create_conversational_qa_chain
 
 log = logging.getLogger(__name__)
 
 
 class ChatService:
-    def __init__(self, document_service=Depends(DocumentService)):
+    def __init__(self,
+                 document_service: DocumentService = Depends(),
+                 llm: BaseLLM = Depends(create_llm)):
         self.__document_service = document_service
+        self.__llm = llm
 
     async def reply(self, history: List[ChatMessage]) -> ChatMessage:
-        new_message = history[-1].content
+        async with self.__document_service.read_context() as context:
+            conversational_qa_chain = create_conversational_qa_chain(self.__llm, context.as_retriever())
+            response: str = await conversational_qa_chain.ainvoke({
+                'question': history[-1].content,
+                'chat_history': convert_history(history[:-1])
+            })
 
-        documents = await self.__document_service.search_documents(new_message)
+        log.debug(f"Response from Model: {response}")
 
-        chat_model = ChatModel.from_pretrained("chat-bison@001")
-        chat_session = chat_model.start_chat(
-            context="Your name is 'XYZ company assistant'. Your job is to answer questions related to the company XYZ."
-                    f" Additionally, here are some snippets from related documents: {documents} " if documents else "",
-            message_history=convert_history(history[:-1]),
-            temperature=0.1,
-            max_output_tokens=256,
-            top_p=0.8,
-            top_k=40
-        )
-
-        response = await chat_session.send_message_async(new_message)
-        log.debug(f"Response from Model: {response.text}")
-
-        return ChatMessage(content=response.text, role='assistant')
+        return ChatMessage(content=response, role='assistant')
 
 
-def convert_history(history: List[ChatMessage]) -> List[vertexai.language_models.ChatMessage]:
-    return [vertexai.language_models.ChatMessage(content=message.content, author=message.role) for message in history]
+def convert_history(history: List[ChatMessage]) -> List[BaseMessage]:
+    return [HumanMessage(content=message.content) if message.role == 'user'
+            else AIMessage(content=message.content)
+            for message in history]

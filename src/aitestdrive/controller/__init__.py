@@ -1,3 +1,5 @@
 from google.cloud import aiplatform
 
-aiplatform.init()
+from aitestdrive.common.config import config
+
+aiplatform.init(project=config.google_cloud_project)

@@ -15,6 +15,7 @@ additional_env_var_mappings = [
 
 class Config(BaseModel, frozen=True):
     listen_port: int = 8000
+    google_cloud_project: str
     document_bucket: str
     qdrant_url: str
     qdrant_api_key: str

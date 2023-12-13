@@ -1,5 +1,8 @@
 import logging
 
+from langchain.globals import set_verbose
+from langchain_core.tracers import ConsoleCallbackHandler
+
 
 def configure_logging():
     logging.basicConfig(
@@ -12,6 +15,12 @@ def configure_logging():
     set_log_level('numexpr.utils', logging.WARN)
 
     set_log_level('aitestdrive.controller', logging.DEBUG)
+
+    set_verbose(True)  # does not work with LCEL, manual callbacks are required for now -- see `log_to_console`
+
+
+def log_to_console():
+    return {'callbacks': [ConsoleCallbackHandler()]}
 
 
 def set_log_level(base, level):

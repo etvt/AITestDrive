@@ -2,10 +2,13 @@ import sys
 
 import uvicorn
 
-from aitestdrive.common.config import config
-
 
 def main(**kwargs):
+    from aitestdrive.common.logging import configure_logging
+    configure_logging()
+
+    from aitestdrive.common.config import config
+
     uvicorn.run("aitestdrive.controller.app:api", host="0.0.0.0", port=config.listen_port, **kwargs)
 
 

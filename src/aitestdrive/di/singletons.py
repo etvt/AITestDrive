@@ -1,16 +1,17 @@
-from aitestdrive.persistence.qdrant import QdrantService
-
 __singletons = {
-    QdrantService: QdrantService()
 }
 
 
-def get(clazz):
-    return __singletons[clazz]
+def get(constructor):
+    return __singletons[constructor]
 
 
-def depends(clazz):
+def of(constructor):
     async def async_dep():
-        return get(clazz)
+        instance = __singletons.get(constructor, None)
+        if not instance:
+            instance = constructor()
+            __singletons[constructor] = instance
+        return instance
 
     return async_dep
