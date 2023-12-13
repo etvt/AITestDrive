@@ -1,4 +1,3 @@
-from fastapi import Depends
 from langchain.document_loaders import GCSDirectoryLoader, PDFPlumberLoader
 from langchain.embeddings import VertexAIEmbeddings
 from langchain.llms.vertexai import VertexAI
@@ -30,5 +29,5 @@ def create_gcs_directory_loader():
                               loader_func=loader_func)
 
 
-def create_qdrant_service(embeddings=Depends(create_embeddings)):
-    return QdrantService(embeddings)
+def create_qdrant_service():
+    return QdrantService(create_embeddings())
