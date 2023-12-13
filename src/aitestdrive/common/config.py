@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 additional_env_var_mappings = [
     ('PORT', 'LISTEN_PORT'),
+    ('GCLOUD_PROJECT', 'GOOGLE_CLOUD_PROJECT'),
 ]
 
 
