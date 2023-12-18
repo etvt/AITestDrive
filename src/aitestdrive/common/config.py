@@ -2,9 +2,10 @@ import logging
 import os
 from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 
 from aitestdrive.common import constants
+from aitestdrive.common.default_config import get_google_cloud_project, DEFAULT_PORT
 
 log = logging.getLogger(__name__)
 
@@ -15,8 +16,8 @@ additional_env_var_mappings = [
 
 
 class Config(BaseModel, frozen=True):
-    listen_port: int = 8000
-    google_cloud_project: str
+    listen_port: int = DEFAULT_PORT
+    google_cloud_project: str = Field(default_factory=get_google_cloud_project)
     document_bucket: str
     qdrant_url: str
     qdrant_api_key: str
