@@ -1,4 +1,4 @@
-### Local
+### [Local BE] chat
 POST http://localhost:8000/api/chat/
 Content-Type: application/json
 
@@ -11,12 +11,16 @@ Content-Type: application/json
   ]
 }
 
-### Local
+### [Local BE] re-vectorize
 POST http://localhost:8000/api/documents/re-vectorize-from-storage
 
 
-### Local
+### [Local BE] version
 GET http://localhost:8000/api/version
+
+
+### [Local FE] index
+GET http://localhost:8888/
 
 
 ### Cloud

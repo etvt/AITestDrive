@@ -1,0 +1,32 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[UI server] build and run" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+    <deployment type="dockerfile">
+      <settings>
+        <option name="imageTag" value="etvt/aitestdrive:local" />
+        <option name="buildKitEnabled" value="true" />
+        <option name="command" value="python3 -m aitestdrive_ui.main" />
+        <option name="containerName" value="aitestdrive_ui_local" />
+        <option name="portBindings">
+          <list>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8000" />
+              <option name="hostIp" value="127.0.0.1" />
+              <option name="hostPort" value="8888" />
+            </DockerPortBindingImpl>
+          </list>
+        </option>
+        <option name="sourceFilePath" value="Dockerfile" />
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/app/docker/volumes/gcloud_cli_config/gcloud" />
+              <option name="hostPath" value="$PROJECT_DIR$/docker/volumes/gcloud_cli_config/gcloud" />
+              <option name="readOnly" value="true" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Test Drive</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<h1>AI Test Drive</h1>
+<p>Your AI assistant is capable of answering questions using a specific set of documents it has access to.</p>
+<div id="chat">
+    <div id="chatHistory"></div>
+    <input type="text" id="chatInput">
+    <button id="sendButton">Send</button>
+</div>
+<script>
+    // parameters from the UI server
+    const chat_api_url = "{{ chat_api_url }}";
+</script>
+<script src="/static/app.js"></script>
+</body>
+</html>

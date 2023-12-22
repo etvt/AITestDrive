@@ -1,1 +1,1 @@
-ENV_FILE_PATH = 'local/.env'
+ENV_FILE_PATH = 'local/.be.env'
