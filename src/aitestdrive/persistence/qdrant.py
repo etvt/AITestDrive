@@ -28,8 +28,7 @@ class QdrantService:
         async with self.__lock.reader():
             yield QdrantReadContext(self.__qdrant_store)
 
-    async def re_upload_collection(self,
-                                   documents: List[Document]):
+    async def re_upload_collection(self, documents: List[Document]):
         async with self.__lock.writer():
             await self.__qdrant_store.afrom_documents(documents=documents,
                                                       url=config.qdrant_url,
