@@ -15,7 +15,7 @@ class ServiceInfo(BaseModel):
 
 
 @api.get("")
-async def chat() -> ServiceInfo:
+async def get_version() -> ServiceInfo:
     log.debug(f"Version request received.")
 
     service_name = os.environ.get('K_SERVICE', 'Unknown')
